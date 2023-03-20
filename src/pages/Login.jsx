@@ -13,6 +13,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
 import Typography from "@mui/material/Typography"
 import { createTheme, ThemeProvider } from "@mui/material/styles"
 import loginImage from "../assets/images/login.svg"
+import axios from "axios"
 
 const theme = createTheme()
 
@@ -24,6 +25,19 @@ export default function Login() {
       email: data.get("email"),
       password: data.get("password"),
     })
+    handleLogin(data)
+  }
+
+  const handleLogin = async (data) => {
+    const response = await axios.post(
+      "http://localhost:4001/api/v1/auth/login",
+      {
+        email: data.get("email"),
+        password: data.get("password"),
+      }
+    )
+
+    console.log(response.data)
   }
 
   return (
@@ -41,7 +55,7 @@ export default function Login() {
           sx={{
             height: " 100%",
             width: "100%",
-            background: "#edf9eb"
+            background: "#edf9eb",
           }}
         >
           <Box
@@ -56,9 +70,10 @@ export default function Login() {
             <img
               src={loginImage}
               width='100%'
+              alt='login illustration'
               // height={"700px"}
-              backgroundPosition='center'
-              backgroundSize='cover'
+              // backgroundPosition='center'
+              // backgroundSize='cover'
             />
           </Box>
         </Grid>
