@@ -14,18 +14,44 @@ import Typography from "@mui/material/Typography"
 import { createTheme, ThemeProvider } from "@mui/material/styles"
 import loginImage from "../assets/images/login.svg"
 import axios from "axios"
+import { useNavigate } from "react-router-dom"
+import { useDispatch, useSelector } from "react-redux"
+import { login } from "../features/auth/authSlice"
 
 const theme = createTheme()
 
 export default function Login() {
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const { isError, isSuccess, user, message, isLoading } = useSelector(
+    (state) => state.auth
+  )
+
+  function loginSubmit(data) {
+    dispatch(login(data))
+  }
+
+  // const nav = React.useCallback(() => {
+  //   navigate("/dashboard")
+  // }, [isSuccess, navigate])
+
+  // React.useEffect(() => {
+  //   if (isSuccess || user) {
+  //     nav()
+  //   }
+  // }, [isSuccess, nav])
+
   const handleSubmit = (event) => {
     event.preventDefault()
     const data = new FormData(event.currentTarget)
-    console.log({
+    // console.log({
+    //   email: data.get("email"),
+    //   password: data.get("password"),
+    // })
+    loginSubmit({
       email: data.get("email"),
       password: data.get("password"),
     })
-    handleLogin(data)
   }
 
   const handleLogin = async (data) => {
