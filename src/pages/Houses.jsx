@@ -1,7 +1,7 @@
 // import { Helmet } from 'react-helmet-async'
-import { filter } from 'lodash'
+import { filter } from "lodash"
 // import { sentenceCase } from 'change-case'
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from "react"
 // @mui
 import {
   Card,
@@ -20,10 +20,11 @@ import {
   Typography,
   IconButton,
   TableContainer,
-  TablePagination
-} from '@mui/material'
-import TableHeader from '../components/dashboard/TableHeader'
-import TableToolbar from '../components/dashboard/TableToolbar'
+  TablePagination,
+} from "@mui/material"
+import TableHeader from "../components/dashboard/TableHeader"
+import TableToolbar from "../components/dashboard/TableToolbar"
+import axios from "axios"
 // components
 // import Label from '../components/label';
 // import { StudentsContext } from '../context/houses-context'
@@ -42,9 +43,11 @@ import TableToolbar from '../components/dashboard/TableToolbar'
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'id', label: 'ID', alignRight: false },
-  { id: 'name', label: 'House Number', alignRight: false },
-  { id: 'appartment', label: 'Appartment', alignRight: false }
+  { id: "id", label: "ID", alignRight: false },
+  { id: "name", label: "House Number", alignRight: false },
+  { id: "appartment", label: "Appartment", alignRight: false },
+  { id: "location", label: "Location", alignRight: false },
+  { id: "status", label: "status", alignRight: false },
 ]
 
 // ----------------------------------------------------------------------
@@ -60,7 +63,7 @@ function descendingComparator(a, b, orderBy) {
 }
 
 function getComparator(order, orderBy) {
-  return order === 'desc'
+  return order === "desc"
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy)
 }
@@ -75,11 +78,8 @@ function applySortFilter(array, comparator, query) {
   if (query) {
     return filter(
       array,
-      (_user) =>
-        _user.fname
-          .concat(_user.lname, _user.sname)
-          .toLowerCase()
-          .indexOf(query.toLowerCase()) !== -1
+      (_house) =>
+        _house.house_number.toLowerCase().indexOf(query.toLowerCase()) !== -1
     )
   }
   return stabilizedThis.map((el) => el[0])
@@ -92,22 +92,36 @@ export default function Houses() {
 
   const [page, setPage] = useState(0)
 
-  const [order, setOrder] = useState('asc')
+  const [order, setOrder] = useState("asc")
 
   const [selected, setSelected] = useState([])
 
-  const [orderBy, setOrderBy] = useState('name')
+  const [orderBy, setOrderBy] = useState("name")
 
-  const [filterName, setFilterName] = useState('')
+  const [filterName, setFilterName] = useState("")
 
   const [rowsPerPage, setRowsPerPage] = useState(5)
 
   const [isOpen, setIsOpen] = useState(false)
 
+  useEffect(() => {
+    getHouses()
+  }, [])
+
+  const getHouses = async () => {
+    try {
+      const response = await axios.get("house")
+      console.log(response)
+      setHouses(response.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   // added start
   //   const { getAllStudents, houses, message, isError, reset } =
   //     useContext(StudentsContext)
-  const [Errmsg, setErrmsg] = useState('')
+  const [Errmsg, setErrmsg] = useState("")
   const [isLoading, setIsLoading] = useState(false)
 
   //   useEffect(() => {
@@ -137,25 +151,25 @@ export default function Houses() {
   }
 
   const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === 'asc'
-    setOrder(isAsc ? 'desc' : 'asc')
+    const isAsc = orderBy === property && order === "asc"
+    setOrder(isAsc ? "desc" : "asc")
     setOrderBy(property)
   }
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = houses.map((n) => n.fname)
+      const newSelecteds = houses.map((n) => n.house_number)
       setSelected(newSelecteds)
       return
     }
     setSelected([])
   }
 
-  const handleClick = (event, fname) => {
-    const selectedIndex = selected.indexOf(fname)
+  const handleClick = (event, house_number) => {
+    const selectedIndex = selected.indexOf(house_number)
     let newSelected = []
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, fname)
+      newSelected = newSelected.concat(selected, house_number)
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1))
     } else if (selectedIndex === selected.length - 1) {
@@ -204,18 +218,18 @@ export default function Houses() {
         <title> Students | Delph Registration </title>
       </Helmet> */}
 
-      <Container>
+      <Container maxWidth='xl'>
         <Stack
-          direction="row"
-          alignItems="center"
-          justifyContent="space-between"
+          direction='row'
+          alignItems='center'
+          justifyContent='space-between'
           mb={5}
         >
-          <Typography variant="h4" gutterBottom>
+          <Typography variant='h4' gutterBottom>
             Appartments
           </Typography>
           <Button
-            variant="contained"
+            variant='contained'
             // startIcon={<Iconify icon="eva:plus-fill" />}
             onClick={() => setIsOpen(true)}
           >
@@ -250,61 +264,54 @@ export default function Houses() {
                     )
                     .map((row, index) => {
                       // const { id, name, role, status, company, avatarUrl, isVerified, houses? } = row;
-                      const {
-                        admnNo,
-                        fname,
-                        lname,
-                        sname,
-                        dob,
-                        studentGender
-                      } = row
-                      const selectedUser = selected.indexOf(fname) !== -1
+                      const { id, house_number, property, userId } = row
+                      const selectedUser = selected.indexOf(house_number) !== -1
 
                       return (
                         <TableRow
                           hover
-                          key={admnNo}
+                          key={house_number}
                           tabIndex={-1}
-                          role="checkbox"
+                          role='checkbox'
                           selected={selectedUser}
                         >
-                          <TableCell padding="checkbox">
+                          <TableCell padding='checkbox'>
                             <Checkbox
                               checked={selectedUser}
-                              onChange={(event) => handleClick(event, fname)}
+                              onChange={(event) =>
+                                handleClick(event, house_number)
+                              }
                             />
                           </TableCell>
-
-                          <TableCell component="th" scope="row" padding="none">
-                            <Stack
-                              direction="row"
-                              alignItems="center"
-                              spacing={2}
-                            >
-                              <Avatar
-                                alt={fname}
-                                src={`/assets/images/avatars/avatar_${
-                                  index + 1
-                                }.jpg`}
-                              />
-                              <Typography variant="subtitle2" noWrap>
-                                {fname} {sname} {lname}
-                              </Typography>
-                            </Stack>
+                          <TableCell align='left'>{id}</TableCell>
+                          <TableCell
+                            component='th'
+                            align='left'
+                            scope='row'
+                            padding='none'
+                          >
+                            <Typography variant='subtitle2' noWrap>
+                              {house_number}
+                            </Typography>
                           </TableCell>
 
-                          <TableCell align="left">{dob}</TableCell>
+                          <TableCell align='left'>{property.name}</TableCell>
+                          <TableCell align='left'>
+                            {property.location}
+                          </TableCell>
 
-                          <TableCell align="left">{`${studentGender}`}</TableCell>
+                          <TableCell align='left'>
+                            {userId ? "occupied" : "vacant"}
+                          </TableCell>
 
                           {/* <TableCell align="left">
                           <Label color={(status === 'banned' && 'error') || 'success'}>{sentenceCase(status)}</Label>
                         </TableCell> */}
 
-                          <TableCell align="right">
+                          <TableCell align='right'>
                             <IconButton
-                              size="large"
-                              color="inherit"
+                              size='large'
+                              color='inherit'
                               onClick={handleOpenMenu}
                             >
                               {/* <Iconify icon={'eva:more-vertical-fill'} /> */}
@@ -323,17 +330,17 @@ export default function Houses() {
                 {isNotFound && (
                   <TableBody>
                     <TableRow>
-                      <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                      <TableCell align='center' colSpan={6} sx={{ py: 3 }}>
                         <Paper
                           sx={{
-                            textAlign: 'center'
+                            textAlign: "center",
                           }}
                         >
-                          <Typography variant="h6" paragraph>
+                          <Typography variant='h6' paragraph>
                             Not found
                           </Typography>
 
-                          <Typography variant="body2">
+                          <Typography variant='body2'>
                             No results found for &nbsp;
                             <strong>&quot;{filterName}&quot;</strong>.
                             <br /> Try checking for typos or using complete
@@ -350,7 +357,7 @@ export default function Houses() {
 
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
-            component="div"
+            component='div'
             count={houses?.length}
             rowsPerPage={rowsPerPage}
             page={page}
@@ -371,18 +378,18 @@ export default function Houses() {
         open={Boolean(open)}
         anchorEl={open}
         onClose={handleCloseMenu}
-        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+        anchorOrigin={{ vertical: "top", horizontal: "left" }}
+        transformOrigin={{ vertical: "top", horizontal: "right" }}
         PaperProps={{
           sx: {
             p: 1,
             width: 140,
-            '& .MuiMenuItem-root': {
+            "& .MuiMenuItem-root": {
               px: 1,
-              typography: 'body2',
-              borderRadius: 0.75
-            }
-          }
+              typography: "body2",
+              borderRadius: 0.75,
+            },
+          },
         }}
       >
         <MenuItem>
@@ -390,7 +397,7 @@ export default function Houses() {
           Edit
         </MenuItem>
 
-        <MenuItem sx={{ color: 'error.main' }}>
+        <MenuItem sx={{ color: "error.main" }}>
           {/* <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} /> */}
           Delete
         </MenuItem>
