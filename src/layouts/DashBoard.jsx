@@ -17,8 +17,18 @@ import Grid from '@mui/material/Grid'
 import MenuIcon from '@mui/icons-material/Menu'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import NotificationsIcon from '@mui/icons-material/Notifications'
-import { Outlet } from 'react-router-dom'
+import { Link, Outlet } from 'react-router-dom'
+import {
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Paper
+} from '@mui/material'
 // import { mainListItems, secondaryListItems } from './listItems'
+import DashboardCustomizeOutlinedIcon from '@mui/icons-material/DashboardCustomizeOutlined'
+import HomeWorkOutlinedIcon from '@mui/icons-material/HomeWorkOutlined'
+import { display } from '@mui/system'
 
 const drawerWidth = 240
 
@@ -117,8 +127,7 @@ function DashboardContent() {
           open={open}
           sx={{
             '& .MuiDrawer-paper': {
-              background: '#333'
-              // color: '#fff'
+              // background: '#333'
             }
           }}
         >
@@ -135,6 +144,22 @@ function DashboardContent() {
             </IconButton>
           </Toolbar>
           <Divider />
+          <List>
+            <ListItemButton component={Link} to="/dashboard">
+              <ListItemIcon>
+                <DashboardCustomizeOutlinedIcon />
+                {/* <DashboardIcon /> */}
+              </ListItemIcon>
+              <ListItemText primary="Dashboard" />
+            </ListItemButton>
+            <ListItemButton component={Link} to="/dashboard/appartments">
+              <ListItemIcon>
+                <HomeWorkOutlinedIcon />
+                {/* <ShoppingCartIcon /> */}
+              </ListItemIcon>
+              <ListItemText primary="Appartments" />
+            </ListItemButton>
+          </List>
         </Drawer>
         <Box
           component="main"
@@ -150,40 +175,7 @@ function DashboardContent() {
         >
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Grid container spacing={3}>
-              <Outlet />
-              <Grid container spacing={2}>
-                <Grid item lg={4} md={6} sm={6} xs={12}></Grid>
-              </Grid>
-              {/* Chart */}
-              {/* <Grid item xs={12} md={8} lg={9}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 240
-                  }}
-                ></Paper>
-              </Grid>
-
-              <Grid item xs={12} md={4} lg={3}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 240
-                  }}
-                ></Paper>
-              </Grid>
-
-              <Grid item xs={12}>
-                <Paper
-                  sx={{ p: 2, display: 'flex', flexDirection: 'column' }}
-                ></Paper>
-              </Grid> */}
-            </Grid>
+            <Outlet />
           </Container>
         </Box>
       </Box>
