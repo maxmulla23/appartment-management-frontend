@@ -1,31 +1,34 @@
 // Login user
-import axios from "axios";
+import axios from 'axios'
+
+// register
+const register = async data => {
+  const response = await axios.post('auth/register', data)
+  console.log(response.data)
+  if (response.data) {
+    return response.data
+  }
+}
 
 // login
-const login = async (data) => {
-  const response = await axios.post("auth/login", data);
-  console.log(response.data);
-  if (response.data) {
-    localStorage.setItem("user", JSON.stringify(response.data));
-    return response.data;
+const login = async data => {
+  const response = await axios.post('auth/login', data)
+  console.log(response.data)
+  if (response.data.token) {
+    localStorage.setItem('user', JSON.stringify(response.data))
+    return response.data
   }
-};
+}
 
 // Logout user
 const logout = async () => {
-//   const config = {
-//     headers: {
-//       Authorization: `Bearer ${JSON.parse(localStorage.getItem("user")).token}`,
-//     },
-//   };
-//   // console.log(config);
-//   const response = await axios.post("/logout", {}, config);
-  localStorage.removeItem("user");
-};
+  localStorage.removeItem('user')
+}
 
 const authService = {
   login,
   logout,
-};
+  register
+}
 
-export default authService;
+export default authService
