@@ -1,5 +1,5 @@
 // import { Box } from '@mui/system'
-import { Avatar, Box, Card, CardContent, Grid, Typography } from '@mui/material'
+import { Box, Card, CardContent, Grid, Typography } from '@mui/material'
 
 import React from 'react'
 
@@ -13,7 +13,7 @@ function Appartments() {
               <img
                 style={{ objectFit: 'cover' }}
                 src="https://www.svgrepo.com/show/475076/house.svg"
-                alt="appartment"
+                alt="apartment"
                 srcset=""
                 height={'100%'}
                 width="100%"
