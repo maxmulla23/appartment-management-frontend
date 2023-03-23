@@ -56,11 +56,13 @@ function LandingPage() {
                 }}
               >
                 <Typography component='h1' variant='h1'>
-                  Lorem ipsum dolor, sit amet.
+                Simplify your property management today
                 </Typography>
-                <Typography variant='body1'>
-                  Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sit
-                  nihil eligendi minima? nihil eligendi minima?
+                <Typography variant='body2'>
+
+                the Granat provides a platform for landlords
+                and tenants to communicate with each other. Get started today!
+
                 </Typography>
               </Box>
             </Grid>
@@ -76,13 +78,11 @@ function LandingPage() {
                   height: "100%",
                 }}
               >
-                <Typography component='h1' variant='h1'>
-                  Lorem ipsum dolor, sit amet.
-                </Typography>
-                <Typography variant='body1'>
-                  Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sit
-                  nihil eligendi minima? nihil eligendi minima?
-                </Typography>
+                <img
+              src={ApartmentImage}
+              alt='landing illustration'
+              style={{ maxWidth: "100%", marginBottom: "2rem" }}
+            />
               </Box>
             </Grid>
           </Grid>
@@ -105,15 +105,13 @@ function LandingPage() {
               mt: 20,
             }}
           >
-            Simplify your property management today
+            
           </Typography>
           <Typography
             variant='h3'
             sx={{ fontsize: "10px", color: "#5A6473", my: 8 }}
           >
-            the Granat provides a platform for landlords
-            <br></br>
-            and tenants to communicate with each other. Get started
+            
           </Typography>
           <Box
             sx={{
@@ -125,11 +123,7 @@ function LandingPage() {
               alignItems: "flex-end",
             }}
           >
-            <img
-              src={ApartmentImage}
-              alt='landing illustration'
-              style={{ maxWidth: "100%", marginBottom: "2rem" }}
-            />
+            
           </Box>
         </Box> */}
       </Box>
