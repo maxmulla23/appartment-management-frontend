@@ -17,19 +17,13 @@ import {
   TablePagination,
   Avatar
 } from '@mui/material'
-import {
-  deepOrange,
-  deepPurple,
-  green,
-  orange,
-  purple
-} from '@mui/material/colors'
+import { deepPurple } from '@mui/material/colors'
 // import TableHeader from '../components/dashboard/TableHeader'
 // import TableToolbar from '../components/dashboard/TableToolbar'
 import axios from 'axios'
 // import { getAllProperties } from '../services/appartments.service'
-import TableHeader from '../dashboard/TableHeader'
-import AssignUserHouse from '../modals/AssignUserHouse'
+import TableHeader from '../components/dashboard/TableHeader'
+import AssignUserHouse from '../components/modals/AssignUserHouse'
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Username', alignRight: false },
@@ -72,8 +66,12 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0])
 }
 
-export default function UserTable({ users, houses }) {
+export default function Complaints() {
   const [page, setPage] = useState(0)
+
+  const [users, setUsers] = useState([])
+
+  const [houses, setHouses] = useState([])
 
   const [current, setCurrent] = useState(0)
 
@@ -90,6 +88,7 @@ export default function UserTable({ users, houses }) {
   const [isOpen, setIsOpen] = useState(false)
 
   const [Errmsg, setErrmsg] = useState('')
+
   const [isLoading, setIsLoading] = useState(false)
 
   const handleRequestSort = (event, property) => {
@@ -164,7 +163,7 @@ export default function UserTable({ users, houses }) {
       <Container maxWidth="xl">
         <Card>
           <Typography variant="h5" sx={{ mx: 2, py: 3, fontWeight: 800 }}>
-            Users
+            Complaints
           </Typography>
           {/* <TableToolbar
             numSelected={selected.length}

@@ -17,18 +17,26 @@ import Grid from '@mui/material/Grid'
 import MenuIcon from '@mui/icons-material/Menu'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import NotificationsIcon from '@mui/icons-material/Notifications'
-import { Link, Outlet } from 'react-router-dom'
+import { Link, Outlet, useNavigate } from 'react-router-dom'
 import {
   List,
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Paper
+  Paper,
+  Popover
 } from '@mui/material'
 // import { mainListItems, secondaryListItems } from './listItems'
 import DashboardCustomizeOutlinedIcon from '@mui/icons-material/DashboardCustomizeOutlined'
 import HomeWorkOutlinedIcon from '@mui/icons-material/HomeWorkOutlined'
-import { display } from '@mui/system'
+import { logout } from '../features/auth/authSlice'
+import {
+  AccountCircle,
+  ContentPasteGo,
+  Person,
+  VerifiedUser
+} from '@mui/icons-material'
+import { useDispatch, useSelector } from 'react-redux'
 
 const drawerWidth = 240
 
@@ -79,7 +87,33 @@ const Drawer = styled(MuiDrawer, {
 const mdTheme = createTheme()
 
 function DashboardContent() {
+  const navigate = useNavigate()
+
+  React.useEffect(() => {
+    if (!user) {
+      navigate('/login')
+    }
+  }, [])
+  const { user } = useSelector((state) => state.auth)
   const [open, setOpen] = React.useState(true)
+  // const [openPop, setopenPop] = React.useState(false)
+  const [anchorEl, setAnchorEl] = React.useState(null)
+  const dispatch = useDispatch()
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget)
+  }
+
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
+  const handleLogout = () => {
+    dispatch(logout())
+  }
+
+  const openPop = Boolean(anchorEl)
+  const id = openPop ? 'simple-popover' : undefined
+
   const toggleDrawer = () => {
     setOpen(!open)
   }
@@ -115,11 +149,33 @@ function DashboardContent() {
             >
               Dashboard
             </Typography>
-            <IconButton color="inherit">
-              <Badge badgeContent={4} color="secondary">
-                <NotificationsIcon />
-              </Badge>
+            <IconButton color="inherit" onClick={handleClick}>
+              <AccountCircle />
             </IconButton>
+            <Popover
+              id={id}
+              open={openPop}
+              anchorEl={anchorEl}
+              onClose={handleClose}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left'
+              }}
+            >
+              <List>
+                <ListItemButton component={Link} to="/dashboard/appartments">
+                  <ListItemIcon>
+                    <Person />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={`${user?.user.firstname} ${user?.user.lastname}`}
+                  />
+                </ListItemButton>
+                <ListItemButton onClick={handleLogout} alignItems="center">
+                  <ListItemText primary="Log Out" />
+                </ListItemButton>
+              </List>
+            </Popover>
           </Toolbar>
         </AppBar>
         <Drawer
@@ -155,9 +211,14 @@ function DashboardContent() {
             <ListItemButton component={Link} to="/dashboard/appartments">
               <ListItemIcon>
                 <HomeWorkOutlinedIcon />
-                {/* <ShoppingCartIcon /> */}
               </ListItemIcon>
               <ListItemText primary="Appartments" />
+            </ListItemButton>
+            <ListItemButton component={Link} to="/dashboard/complaints">
+              <ListItemIcon>
+                <ContentPasteGo />
+              </ListItemIcon>
+              <ListItemText primary="Complaints" />
             </ListItemButton>
           </List>
         </Drawer>

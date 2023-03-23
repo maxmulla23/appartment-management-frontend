@@ -1,7 +1,48 @@
 import { Grid, Paper, Typography } from '@mui/material'
+import axios from 'axios'
 import React from 'react'
+import UserTable from '../components/users/UserTable'
 
 function DashboardHome() {
+  const [users, setUsers] = React.useState([])
+  const [houses, setHouses] = React.useState([])
+  const [appartments, setAppartments] = React.useState([])
+
+  React.useEffect(() => {
+    getUsers()
+    getHouses()
+    // getAppartments()
+  }, [])
+
+  const getUsers = async () => {
+    try {
+      const response = await axios.get('users')
+      // console.log(response)
+      setUsers(response.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const getHouses = async () => {
+    try {
+      const response = await axios.get('house')
+      console.log(response)
+      setHouses(response.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  // const getAppartments = async () => {
+  //   try {
+  //     const response = await axios.get('house')
+  //     console.log(response)
+  //     setHouses(response.data)
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
   return (
     <Grid container spacing={3}>
       <Grid container spacing={2} padding={3}>
@@ -33,7 +74,7 @@ function DashboardHome() {
               Houses
             </Typography>
             <Typography component="h2" variant="h6">
-              77
+              {houses?.length}
             </Typography>
           </Paper>
         </Grid>
@@ -49,11 +90,12 @@ function DashboardHome() {
               Tenants
             </Typography>
             <Typography component="h2" variant="h6">
-              10
+              {users?.length}
             </Typography>
           </Paper>
         </Grid>
       </Grid>
+      <UserTable users={users} houses={houses} />
     </Grid>
   )
 }

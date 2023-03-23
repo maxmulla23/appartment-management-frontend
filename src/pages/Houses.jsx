@@ -1,53 +1,35 @@
-// import { Helmet } from 'react-helmet-async'
-import { filter } from "lodash"
-// import { sentenceCase } from 'change-case'
-import { useContext, useEffect, useState } from "react"
+import { filter } from 'lodash'
+import { useEffect, useState } from 'react'
 // @mui
 import {
   Card,
   Table,
   Stack,
   Paper,
-  Avatar,
   Button,
-  Popover,
   Checkbox,
   TableRow,
-  MenuItem,
   TableBody,
   TableCell,
   Container,
   Typography,
-  IconButton,
   TableContainer,
-  TablePagination,
-} from "@mui/material"
-import TableHeader from "../components/dashboard/TableHeader"
-import TableToolbar from "../components/dashboard/TableToolbar"
-import axios from "axios"
-// components
-// import Label from '../components/label';
-// import { StudentsContext } from '../context/houses-context'
-// import Iconify from '../components/iconify'
-// import Scrollbar from '../components/scrollbar'
-// sections
-// import { UserListHead, UserListToolbar } from '../sections/@dashboard/user'
-// mock
-// import parents from '../_mock/user';
-// import ModalContainer from '../components/modal'
-// import { AppContext } from '../context/app-context'
-// import CreateStudent from '../components/forms/CreateStudent'
-// import CreateStudent from '../components/forms/CreateStudent';
-// import CreateStudent from 'src/components/forms/createStudent';
-
-// ----------------------------------------------------------------------
+  TablePagination
+} from '@mui/material'
+import { green, orange, purple } from '@mui/material/colors'
+import TableHeader from '../components/dashboard/TableHeader'
+import TableToolbar from '../components/dashboard/TableToolbar'
+import axios from 'axios'
+import { getAllProperties } from '../services/appartments.service'
+import CreateHouse from '../components/modals/CreateHouse'
+import { CenterFocusStrong } from '@mui/icons-material'
 
 const TABLE_HEAD = [
-  { id: "id", label: "ID", alignRight: false },
-  { id: "name", label: "House Number", alignRight: false },
-  { id: "appartment", label: "Appartment", alignRight: false },
-  { id: "location", label: "Location", alignRight: false },
-  { id: "status", label: "status", alignRight: false },
+  { id: 'id', label: 'ID', alignRight: false },
+  { id: 'name', label: 'House Number', alignRight: false },
+  { id: 'appartment', label: 'Appartment', alignRight: false },
+  { id: 'location', label: 'Location', alignRight: false },
+  { id: 'status', label: 'status', alignRight: false }
 ]
 
 // ----------------------------------------------------------------------
@@ -63,7 +45,7 @@ function descendingComparator(a, b, orderBy) {
 }
 
 function getComparator(order, orderBy) {
-  return order === "desc"
+  return order === 'desc'
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy)
 }
@@ -90,15 +72,17 @@ export default function Houses() {
 
   const [houses, setHouses] = useState([])
 
+  const [properties, setProperties] = useState([])
+
   const [page, setPage] = useState(0)
 
-  const [order, setOrder] = useState("asc")
+  const [order, setOrder] = useState('asc')
 
   const [selected, setSelected] = useState([])
 
-  const [orderBy, setOrderBy] = useState("name")
+  const [orderBy, setOrderBy] = useState('name')
 
-  const [filterName, setFilterName] = useState("")
+  const [filterName, setFilterName] = useState('')
 
   const [rowsPerPage, setRowsPerPage] = useState(5)
 
@@ -106,11 +90,14 @@ export default function Houses() {
 
   useEffect(() => {
     getHouses()
+    getProperties()
   }, [])
+
+  
 
   const getHouses = async () => {
     try {
-      const response = await axios.get("house")
+      const response = await axios.get('house')
       console.log(response)
       setHouses(response.data)
     } catch (error) {
@@ -118,29 +105,18 @@ export default function Houses() {
     }
   }
 
-  // added start
-  //   const { getAllStudents, houses, message, isError, reset } =
-  //     useContext(StudentsContext)
-  const [Errmsg, setErrmsg] = useState("")
+  const getProperties = async () => {
+    try {
+      const data = await getAllProperties()
+      console.log(data)
+      setProperties(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const [Errmsg, setErrmsg] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-
-  //   useEffect(() => {
-  //     if (isError) {
-  //       setErrmsg(message.error)
-  //     }
-
-  //     const getStudents = async () => {
-  //       setIsLoading(true)
-  //       await getAllStudents()
-  //       setIsLoading(false)
-  //     }
-
-  //     getStudents()
-
-  //     return reset()
-  //   }, [])
-
-  // added stop
 
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget)
@@ -151,8 +127,8 @@ export default function Houses() {
   }
 
   const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === "asc"
-    setOrder(isAsc ? "desc" : "asc")
+    const isAsc = orderBy === property && order === 'asc'
+    setOrder(isAsc ? 'desc' : 'asc')
     setOrderBy(property)
   }
 
@@ -214,26 +190,22 @@ export default function Houses() {
 
   return (
     <>
-      {/* <Helmet>
-        <title> Students | Delph Registration </title>
-      </Helmet> */}
-
-      <Container maxWidth='xl'>
+      <Container maxWidth="xl">
         <Stack
-          direction='row'
-          alignItems='center'
-          justifyContent='space-between'
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
           mb={5}
         >
-          <Typography variant='h4' gutterBottom>
-            Appartments
+          <Typography variant="h4" gutterBottom>
+            All Houses
           </Typography>
           <Button
-            variant='contained'
+            variant="contained"
             // startIcon={<Iconify icon="eva:plus-fill" />}
             onClick={() => setIsOpen(true)}
           >
-            New Appartment
+            New House
           </Button>
         </Stack>
 
@@ -272,10 +244,10 @@ export default function Houses() {
                           hover
                           key={house_number}
                           tabIndex={-1}
-                          role='checkbox'
+                          role="checkbox"
                           selected={selectedUser}
                         >
-                          <TableCell padding='checkbox'>
+                          <TableCell padding="checkbox">
                             <Checkbox
                               checked={selectedUser}
                               onChange={(event) =>
@@ -283,39 +255,38 @@ export default function Houses() {
                               }
                             />
                           </TableCell>
-                          <TableCell align='left'>{id}</TableCell>
+                          <TableCell align="left">{id}</TableCell>
                           <TableCell
-                            component='th'
-                            align='left'
-                            scope='row'
-                            padding='none'
+                            component="th"
+                            align="left"
+                            scope="row"
+                            padding="none"
                           >
-                            <Typography variant='subtitle2' noWrap>
+                            <Typography variant="subtitle2" noWrap>
                               {house_number}
                             </Typography>
                           </TableCell>
 
-                          <TableCell align='left'>{property.name}</TableCell>
-                          <TableCell align='left'>
+                          <TableCell align="left">{property.name}</TableCell>
+                          <TableCell align="left">
                             {property.location}
                           </TableCell>
 
-                          <TableCell align='left'>
-                            {userId ? "occupied" : "vacant"}
-                          </TableCell>
-
-                          {/* <TableCell align="left">
-                          <Label color={(status === 'banned' && 'error') || 'success'}>{sentenceCase(status)}</Label>
-                        </TableCell> */}
-
-                          <TableCell align='right'>
-                            <IconButton
-                              size='large'
-                              color='inherit'
-                              onClick={handleOpenMenu}
+                          <TableCell align="left">
+                            <Typography
+                              variant="body2"
+                              sx={{
+                                color: userId ? green[600] : purple[900],
+                                textAlign: 'center',
+                                width: 90,
+                                borderRadius: 2,
+                                background: userId ? green[100] : purple[100],
+                                fontWeight: 'bold',
+                                fontSize: 11
+                              }}
                             >
-                              {/* <Iconify icon={'eva:more-vertical-fill'} /> */}
-                            </IconButton>
+                              {userId ? 'occupied' : 'vacant'}
+                            </Typography>
                           </TableCell>
                         </TableRow>
                       )
@@ -330,17 +301,17 @@ export default function Houses() {
                 {isNotFound && (
                   <TableBody>
                     <TableRow>
-                      <TableCell align='center' colSpan={6} sx={{ py: 3 }}>
+                      <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
                         <Paper
                           sx={{
-                            textAlign: "center",
+                            textAlign: 'center'
                           }}
                         >
-                          <Typography variant='h6' paragraph>
+                          <Typography variant="h6" paragraph>
                             Not found
                           </Typography>
 
-                          <Typography variant='body2'>
+                          <Typography variant="body2">
                             No results found for &nbsp;
                             <strong>&quot;{filterName}&quot;</strong>.
                             <br /> Try checking for typos or using complete
@@ -357,7 +328,7 @@ export default function Houses() {
 
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
-            component='div'
+            component="div"
             count={houses?.length}
             rowsPerPage={rowsPerPage}
             page={page}
@@ -367,41 +338,12 @@ export default function Houses() {
         </Card>
       </Container>
 
-      {/* Modal */}
-      {/* {isOpen && (
-        <ModalContainer setIsOpen={setIsOpen} open={isOpen}>
-          <CreateStudent />
-        </ModalContainer>
-      )} */}
-
-      <Popover
-        open={Boolean(open)}
-        anchorEl={open}
-        onClose={handleCloseMenu}
-        anchorOrigin={{ vertical: "top", horizontal: "left" }}
-        transformOrigin={{ vertical: "top", horizontal: "right" }}
-        PaperProps={{
-          sx: {
-            p: 1,
-            width: 140,
-            "& .MuiMenuItem-root": {
-              px: 1,
-              typography: "body2",
-              borderRadius: 0.75,
-            },
-          },
-        }}
-      >
-        <MenuItem>
-          {/* <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} /> */}
-          Edit
-        </MenuItem>
-
-        <MenuItem sx={{ color: "error.main" }}>
-          {/* <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} /> */}
-          Delete
-        </MenuItem>
-      </Popover>
+      <CreateHouse
+        setOpen={setIsOpen}
+        open={isOpen}
+        properties={properties}
+        setHouses={setHouses}
+      />
     </>
   )
 }
