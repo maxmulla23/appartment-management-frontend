@@ -1,5 +1,5 @@
-import { filter } from 'lodash'
-import { useEffect, useState } from 'react'
+import { filter } from "lodash"
+import { useEffect, useState } from "react"
 // @mui
 import {
   Card,
@@ -14,22 +14,24 @@ import {
   Container,
   Typography,
   TableContainer,
-  TablePagination
-} from '@mui/material'
-import { green, orange, purple } from '@mui/material/colors'
-import TableHeader from '../components/dashboard/TableHeader'
-import TableToolbar from '../components/dashboard/TableToolbar'
-import axios from 'axios'
-import { getAllProperties } from '../services/appartments.service'
-import CreateHouse from '../components/modals/CreateHouse'
-import { CenterFocusStrong } from '@mui/icons-material'
+  TablePagination,
+} from "@mui/material"
+import { green, orange, purple } from "@mui/material/colors"
+import TableHeader from "../components/dashboard/TableHeader"
+import TableToolbar from "../components/dashboard/TableToolbar"
+import axios from "axios"
+import { getAllProperties } from "../services/appartments.service"
+import CreateHouse from "../components/modals/CreateHouse"
+import { CenterFocusStrong } from "@mui/icons-material"
+import { useNavigate } from "react-router-dom"
+import { useSelector } from "react-redux"
 
 const TABLE_HEAD = [
-  { id: 'id', label: 'ID', alignRight: false },
-  { id: 'name', label: 'House Number', alignRight: false },
-  { id: 'appartment', label: 'Appartment', alignRight: false },
-  { id: 'location', label: 'Location', alignRight: false },
-  { id: 'status', label: 'status', alignRight: false }
+  { id: "id", label: "ID", alignRight: false },
+  { id: "name", label: "House Number", alignRight: false },
+  { id: "appartment", label: "Appartment", alignRight: false },
+  { id: "location", label: "Location", alignRight: false },
+  { id: "status", label: "status", alignRight: false },
 ]
 
 // ----------------------------------------------------------------------
@@ -45,7 +47,7 @@ function descendingComparator(a, b, orderBy) {
 }
 
 function getComparator(order, orderBy) {
-  return order === 'desc'
+  return order === "desc"
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy)
 }
@@ -76,28 +78,31 @@ export default function Houses() {
 
   const [page, setPage] = useState(0)
 
-  const [order, setOrder] = useState('asc')
+  const [order, setOrder] = useState("asc")
 
   const [selected, setSelected] = useState([])
 
-  const [orderBy, setOrderBy] = useState('name')
+  const [orderBy, setOrderBy] = useState("name")
 
-  const [filterName, setFilterName] = useState('')
+  const [filterName, setFilterName] = useState("")
 
   const [rowsPerPage, setRowsPerPage] = useState(5)
 
   const [isOpen, setIsOpen] = useState(false)
+  const navigate = useNavigate()
+  const { user } = useSelector((state) => state.auth)
 
   useEffect(() => {
+    if (user.user.roleId === 2) {
+      navigate("/dashboard/home")
+    }
     getHouses()
     getProperties()
   }, [])
 
-  
-
   const getHouses = async () => {
     try {
-      const response = await axios.get('house')
+      const response = await axios.get("house")
       console.log(response)
       setHouses(response.data)
     } catch (error) {
@@ -115,7 +120,7 @@ export default function Houses() {
     }
   }
 
-  const [Errmsg, setErrmsg] = useState('')
+  const [Errmsg, setErrmsg] = useState("")
   const [isLoading, setIsLoading] = useState(false)
 
   const handleOpenMenu = (event) => {
@@ -127,8 +132,8 @@ export default function Houses() {
   }
 
   const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === 'asc'
-    setOrder(isAsc ? 'desc' : 'asc')
+    const isAsc = orderBy === property && order === "asc"
+    setOrder(isAsc ? "desc" : "asc")
     setOrderBy(property)
   }
 
@@ -190,18 +195,18 @@ export default function Houses() {
 
   return (
     <>
-      <Container maxWidth="xl">
+      <Container maxWidth='xl'>
         <Stack
-          direction="row"
-          alignItems="center"
-          justifyContent="space-between"
+          direction='row'
+          alignItems='center'
+          justifyContent='space-between'
           mb={5}
         >
-          <Typography variant="h4" gutterBottom>
+          <Typography variant='h4' gutterBottom>
             All Houses
           </Typography>
           <Button
-            variant="contained"
+            variant='contained'
             // startIcon={<Iconify icon="eva:plus-fill" />}
             onClick={() => setIsOpen(true)}
           >
@@ -244,10 +249,10 @@ export default function Houses() {
                           hover
                           key={house_number}
                           tabIndex={-1}
-                          role="checkbox"
+                          role='checkbox'
                           selected={selectedUser}
                         >
-                          <TableCell padding="checkbox">
+                          <TableCell padding='checkbox'>
                             <Checkbox
                               checked={selectedUser}
                               onChange={(event) =>
@@ -255,37 +260,37 @@ export default function Houses() {
                               }
                             />
                           </TableCell>
-                          <TableCell align="left">{id}</TableCell>
+                          <TableCell align='left'>{id}</TableCell>
                           <TableCell
-                            component="th"
-                            align="left"
-                            scope="row"
-                            padding="none"
+                            component='th'
+                            align='left'
+                            scope='row'
+                            padding='none'
                           >
-                            <Typography variant="subtitle2" noWrap>
+                            <Typography variant='subtitle2' noWrap>
                               {house_number}
                             </Typography>
                           </TableCell>
 
-                          <TableCell align="left">{property.name}</TableCell>
-                          <TableCell align="left">
+                          <TableCell align='left'>{property.name}</TableCell>
+                          <TableCell align='left'>
                             {property.location}
                           </TableCell>
 
-                          <TableCell align="left">
+                          <TableCell align='left'>
                             <Typography
-                              variant="body2"
+                              variant='body2'
                               sx={{
                                 color: userId ? green[600] : purple[900],
-                                textAlign: 'center',
+                                textAlign: "center",
                                 width: 90,
                                 borderRadius: 2,
                                 background: userId ? green[100] : purple[100],
-                                fontWeight: 'bold',
-                                fontSize: 11
+                                fontWeight: "bold",
+                                fontSize: 11,
                               }}
                             >
-                              {userId ? 'occupied' : 'vacant'}
+                              {userId ? "occupied" : "vacant"}
                             </Typography>
                           </TableCell>
                         </TableRow>
@@ -301,17 +306,17 @@ export default function Houses() {
                 {isNotFound && (
                   <TableBody>
                     <TableRow>
-                      <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                      <TableCell align='center' colSpan={6} sx={{ py: 3 }}>
                         <Paper
                           sx={{
-                            textAlign: 'center'
+                            textAlign: "center",
                           }}
                         >
-                          <Typography variant="h6" paragraph>
+                          <Typography variant='h6' paragraph>
                             Not found
                           </Typography>
 
-                          <Typography variant="body2">
+                          <Typography variant='body2'>
                             No results found for &nbsp;
                             <strong>&quot;{filterName}&quot;</strong>.
                             <br /> Try checking for typos or using complete
@@ -328,7 +333,7 @@ export default function Houses() {
 
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
-            component="div"
+            component='div'
             count={houses?.length}
             rowsPerPage={rowsPerPage}
             page={page}

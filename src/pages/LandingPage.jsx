@@ -55,14 +55,16 @@ function LandingPage() {
                   height: "100%",
                 }}
               >
-                <Typography component='h1' variant='h1'>
-                Simplify your property management today
+                <Typography
+                  component='h1'
+                  variant='h3'
+                  sx={{ fontWeight: 800, letterSpacing: 2, lineHeight: 1.3 }}
+                >
+                  Simplify your property management today
                 </Typography>
                 <Typography variant='body2'>
-
-                the Granat provides a platform for landlords
-                and tenants to communicate with each other. Get started today!
-
+                  the Granat provides a platform for landlords and tenants to
+                  communicate with each other. Get started today!
                 </Typography>
               </Box>
             </Grid>
@@ -79,10 +81,10 @@ function LandingPage() {
                 }}
               >
                 <img
-              src={ApartmentImage}
-              alt='landing illustration'
-              style={{ maxWidth: "100%", marginBottom: "2rem" }}
-            />
+                  src={ApartmentImage}
+                  alt='landing illustration'
+                  style={{ maxWidth: "100%", marginBottom: "2rem" }}
+                />
               </Box>
             </Grid>
           </Grid>

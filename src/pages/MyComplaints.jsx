@@ -16,8 +16,13 @@ import {
   TableContainer,
   TablePagination,
   Avatar,
+  Grid,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
 } from "@mui/material"
-import { deepPurple } from "@mui/material/colors"
+import { deepPurple, green, red, yellow } from "@mui/material/colors"
 // import TableHeader from '../components/dashboard/TableHeader'
 // import TableToolbar from '../components/dashboard/TableToolbar'
 import axios from "axios"
@@ -25,7 +30,14 @@ import axios from "axios"
 import TableHeader from "../components/dashboard/TableHeader"
 import AssignUserHouse from "../components/modals/AssignUserHouse"
 import { useSelector } from "react-redux"
-import { useNavigate } from "react-router-dom"
+import {
+  BuildOutlined,
+  HouseOutlined,
+  NotificationImportant,
+  Person2Outlined,
+} from "@mui/icons-material"
+import MakeComplaint from "../components/modals/MakeComplaint"
+import moment from "moment"
 
 const TABLE_HEAD = [
   { id: "id", label: "date", alignRight: false },
@@ -69,12 +81,12 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0])
 }
 
-export default function Complaints() {
+export default function MyComplaints() {
   const [page, setPage] = useState(0)
 
   const [issues, setIssues] = useState([])
 
-  const [houses, setHouses] = useState([])
+  const [notices, setNotices] = useState([])
 
   const [current, setCurrent] = useState(0)
 
@@ -95,20 +107,28 @@ export default function Complaints() {
   const [isLoading, setIsLoading] = useState(false)
 
   const { user } = useSelector((state) => state.auth)
-  const navigate = useNavigate()
 
   useEffect(() => {
-    if (user.user.roleId === 2) {
-      navigate("/dashboard/home")
-    }
     getIssues()
+    getNotices()
   }, [])
 
   const getIssues = async () => {
     try {
-      const response = await axios.get("issue")
+      const response = await axios.get(`issue/${user.user.id}`)
       console.log(response)
       setIssues(response.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const getNotices = async () => {
+    try {
+      const response = await axios.get(
+        `notice/${user.user.House[0].propertyId}`
+      )
+      setNotices(response.data)
     } catch (error) {
       console.log(error)
     }
@@ -156,10 +176,10 @@ export default function Complaints() {
     setRowsPerPage(parseInt(event.target.value, 10))
   }
 
-  const handleOpen = (id) => {
-    setIsOpen(true)
-    setCurrent(id)
-  }
+  // const handleOpen = (id) => {
+  //   setIsOpen(true)
+  //   setCurrent(id)
+  // }
 
   const handleFilterByName = (event) => {
     setPage(0)
@@ -181,13 +201,119 @@ export default function Complaints() {
     return <p>Loading ... </p>
   }
 
+  console.log(user.user)
+
   return (
     <>
+      <Grid container spacing={2} padding={3}>
+        <Grid item lg={4} md={6} sm={6} xs={12}>
+          <Paper
+            sx={{
+              padding: 4,
+              display: "flex",
+              gap: 4,
+            }}
+          >
+            <Avatar sx={{ bgcolor: green[500], width: 70, height: 70 }}>
+              <Person2Outlined />
+            </Avatar>
+
+            <Stack
+              direction='column'
+              alignItems='flex-start'
+              justifyContent={"center"}
+            >
+              <Typography variant='h6' noWrap>
+                {user?.user.firstname} {user?.user.lastname}
+              </Typography>
+              <Typography variant='subtitle' noWrap>
+                {user?.user.email}
+              </Typography>
+              {/* <Typography variant='subtitle' noWrap>
+                {user?.user.role.name}
+              </Typography> */}
+            </Stack>
+          </Paper>
+        </Grid>
+        <Grid item lg={4} md={6} sm={6} xs={12}>
+          <Paper
+            sx={{
+              padding: 4,
+              display: "flex",
+              gap: 4,
+            }}
+          >
+            <Avatar sx={{ bgcolor: yellow[900], width: 70, height: 70 }}>
+              <HouseOutlined />
+            </Avatar>
+
+            <Stack
+              direction='column'
+              alignItems='flex-start'
+              justifyContent={"center"}
+            >
+              <Typography variant='h6' noWrap>
+                House Details
+              </Typography>
+
+              {user?.user.House.length > 0 ? (
+                <>
+                  <Typography>
+                    House Number: {user?.user.House[0].house_number}
+                  </Typography>
+                  {/* <Typography>No House Details Yet</Typography> */}
+                </>
+              ) : (
+                <Typography>No House Details Yet</Typography>
+              )}
+            </Stack>
+          </Paper>
+        </Grid>
+      </Grid>
+
       <Container maxWidth='xl'>
-        <Card>
-          <Typography variant='h5' sx={{ mx: 2, py: 3, fontWeight: 800 }}>
-            Complaints
+        <Typography variant='h4' sx={{ mt: 6 }} gutterBottom>
+          Notices
+        </Typography>
+        <List>
+          {notices.length > 0 ? (
+            notices.map((item) => (
+              <ListItem sx={{ background: "#fff", marginY: 2 }}>
+                <ListItemIcon>
+                  <Avatar sx={{ background: red[400] }}>
+                    <NotificationImportant />
+                  </Avatar>
+                </ListItemIcon>
+                <ListItemText
+                  primary={item.title}
+                  secondary={item.description}
+                />
+                <Typography>
+                  {moment(new Date(item.created_at)).calendar()}
+                </Typography>
+              </ListItem>
+            ))
+          ) : (
+            <Typography>Nothing Here</Typography>
+          )}
+        </List>
+        <Stack
+          direction='row'
+          alignItems='center'
+          justifyContent='space-between'
+          my={5}
+        >
+          <Typography variant='h4' gutterBottom>
+            My Complaints
           </Typography>
+          {user.user.House.length > 0 && (
+            <Button variant='contained' onClick={() => setIsOpen(true)}>
+              Make Complaint
+            </Button>
+          )}
+        </Stack>
+
+        <Card>
           {/* <TableToolbar
             numSelected={selected.length}
             filterName={filterName}
@@ -341,13 +467,18 @@ export default function Complaints() {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
 
-          <AssignUserHouse
+          {/* <AssignUserHouse
             setOpen={setIsOpen}
             open={isOpen}
             houses={houses}
-            userId={current}
+            // userId={current}
             // properties={properties}
             // setHouses={setHouses}
+          /> */}
+          <MakeComplaint
+            setOpen={setIsOpen}
+            open={isOpen}
+            setIssues={setIssues}
           />
         </Card>
       </Container>

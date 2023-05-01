@@ -1,14 +1,21 @@
-import { Grid, Paper, Typography } from '@mui/material'
-import axios from 'axios'
-import React from 'react'
-import UserTable from '../components/users/UserTable'
+import { Grid, Paper, Typography } from "@mui/material"
+import axios from "axios"
+import React from "react"
+import { useSelector } from "react-redux"
+import { useNavigate } from "react-router-dom"
+import UserTable from "../components/users/UserTable"
 
 function DashboardHome() {
   const [users, setUsers] = React.useState([])
   const [houses, setHouses] = React.useState([])
   const [appartments, setAppartments] = React.useState([])
+  const { user } = useSelector((state) => state.auth)
+  const navigate = useNavigate()
 
   React.useEffect(() => {
+    if (user.user.roleId === 2) {
+      navigate("/dashboard/home")
+    }
     getUsers()
     getHouses()
     // getAppartments()
@@ -16,7 +23,7 @@ function DashboardHome() {
 
   const getUsers = async () => {
     try {
-      const response = await axios.get('users')
+      const response = await axios.get("users")
       // console.log(response)
       setUsers(response.data)
     } catch (error) {
@@ -26,7 +33,7 @@ function DashboardHome() {
 
   const getHouses = async () => {
     try {
-      const response = await axios.get('house')
+      const response = await axios.get("house")
       console.log(response)
       setHouses(response.data)
     } catch (error) {
@@ -50,14 +57,14 @@ function DashboardHome() {
           <Paper
             sx={{
               padding: 4,
-              display: 'flex',
-              justifyContent: 'space-between'
+              display: "flex",
+              justifyContent: "space-between",
             }}
           >
-            <Typography component="h2" variant="h5">
+            <Typography component='h2' variant='h5'>
               Appartments
             </Typography>
-            <Typography component="h2" variant="h6">
+            <Typography component='h2' variant='h6'>
               2
             </Typography>
           </Paper>
@@ -66,14 +73,14 @@ function DashboardHome() {
           <Paper
             sx={{
               padding: 4,
-              display: 'flex',
-              justifyContent: 'space-between'
+              display: "flex",
+              justifyContent: "space-between",
             }}
           >
-            <Typography component="h2" variant="h5">
+            <Typography component='h2' variant='h5'>
               Houses
             </Typography>
-            <Typography component="h2" variant="h6">
+            <Typography component='h2' variant='h6'>
               {houses?.length}
             </Typography>
           </Paper>
@@ -82,14 +89,14 @@ function DashboardHome() {
           <Paper
             sx={{
               padding: 4,
-              display: 'flex',
-              justifyContent: 'space-between'
+              display: "flex",
+              justifyContent: "space-between",
             }}
           >
-            <Typography component="h2" variant="h5">
+            <Typography component='h2' variant='h5'>
               Tenants
             </Typography>
-            <Typography component="h2" variant="h6">
+            <Typography component='h2' variant='h6'>
               {users?.length}
             </Typography>
           </Paper>
